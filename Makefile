@@ -19,6 +19,7 @@ OBJS= boot.o kernel.o
 	$(CC) -c -o $@ $< $(CFLAGS)
 
 $(CDROM) : $(OSNAME) grub.cfg
+	mkdir -p isodir/boot/grub
 	cp $(OSNAME) isodir/boot/$(OSNAME)
 	cp grub.cfg isodir/boot/grub
 	grub-mkrescue -o $@ isodir
@@ -29,9 +30,12 @@ $(OSNAME) : $(OBJS)
 
 .PHONY: clean
 
+run :
+	qemu-system-i386 --curses --serial mon:stdio --kernel minimal.bin
+
 clean :
-	rm isodir/boot/$(OSNAME)
-	rm isodir/boot/grub/grub.cfg
-	rm *.o
-	rm $(OSNAME)
-	rm $(CDROM)
+	rm -rf isodir/boot/$(OSNAME)
+	rm -rf isodir/boot/grub/grub.cfg
+	rm -rf *.o
+	rm -rf $(OSNAME)
+	rm -rf $(CDROM)
