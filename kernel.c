@@ -83,25 +83,36 @@ void terminal_setcolor(uint8_t color) {
 }
 
 void terminal_putentryat(char c, uint8_t color, size_t x, size_t y) {
-	const size_t index = y * VGA_WIDTH + x;
-	
-	terminal_buffer[index] = make_vgaentry(c, color);
+   const size_t index = y * VGA_WIDTH + x;
+      terminal_buffer[index] = make_vgaentry(c, color);
 }
+
+void terminal_scrolling() {
+		for(int x = VGA_WIDTH; x<( VGA_WIDTH * VGA_HEIGHT); x++){
+	           terminal_buffer[x - VGA_WIDTH] = terminal_buffer[x];
+		   if(x <= ((VGA_WIDTH - 1) * VGA_HEIGHT)){                                          
+                            terminal_buffer[x] = ' ';        
+                     } 
+		} 
+}    
 
 void terminal_putchar(char c){
 	if(c == '\n'){
 	   terminal_column = 0;
-	   terminal_row = terminal_row + 1;        
+	   if (++terminal_row == VGA_HEIGHT) {                             
+		terminal_scrolling();
+		terminal_putentryat(c, terminal_color, terminal_column, terminal_row);
+		terminal_row -=1;
+	   }          
 	}else{
 		terminal_putentryat(c, terminal_color, terminal_column, terminal_row);
-	
 	if (++terminal_column == VGA_WIDTH) {
 		terminal_column = 0;
 		if (++terminal_row == VGA_HEIGHT) {
-			terminal_row = 0;
+			terminal_scrolling();
 		}
+	    }
 	}
-	}	
 }
 
 void terminal_writestring(const char* data) {
@@ -121,8 +132,18 @@ void kernel_main() {
 	/* Since there is no support for newlines in terminal_putchar yet,
 	 * '\n' will produce some VGA specific character instead.
 	 * This is normal until you implement the missing parts.*/
-	terminal_writestring("Hello, kernel World!\n");
-	terminal_writestring("Hello, kernel World!\n");
-	terminal_writestring("Hello, kernel World!\n");  
+	terminal_setcolor(12);
+	for (int x = 0; x< 6; x ++){
+		terminal_writestring("Hello, kernel World! v2-ronchi red\n");           
+	}
+	terminal_setcolor(1);
+	for (int x = 0; x< 18; x ++){                                            
+             terminal_writestring("Hello, kernel World! v2-ronchi blue\n");           
+        }
+	terminal_setcolor(2);
+	for (int x = 0; x< 5; x ++){                                            
+              terminal_writestring("Hello, kernel World! v2-ronchi green\n");           
+	}
 }
+
 
