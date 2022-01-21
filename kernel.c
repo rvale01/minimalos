@@ -129,18 +129,15 @@ void kernel_main() {
 	/* Initialize terminal interface */
 	terminal_initialize();
 
-	/* Since there is no support for newlines in terminal_putchar yet,
-	 * '\n' will produce some VGA specific character instead.
-	 * This is normal until you implement the missing parts.*/
-	terminal_setcolor(12);
+	terminal_setcolor(COLOR_RED);
 	for (int x = 0; x< 6; x ++){
 		terminal_writestring("Hello, kernel World! v2-ronchi red\n");           
 	}
-	terminal_setcolor(1);
+	terminal_setcolor(COLOR_BLUE);
 	for (int x = 0; x< 18; x ++){                                            
              terminal_writestring("Hello, kernel World! v2-ronchi blue\n");           
         }
-	terminal_setcolor(2);
+	terminal_setcolor(COLOR_GREEN);
 	for (int x = 0; x< 5; x ++){                                            
               terminal_writestring("Hello, kernel World! v2-ronchi green\n");           
 	}
